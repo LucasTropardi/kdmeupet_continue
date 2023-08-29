@@ -1,5 +1,5 @@
 <?php
-include_once "conexao.php";
+require_once "conexao.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['g_id'])) {
     $g_id = filter_input(INPUT_GET, 'g_id', FILTER_VALIDATE_INT);

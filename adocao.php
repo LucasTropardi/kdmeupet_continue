@@ -2,8 +2,8 @@
 
     if (!isset($_SESSION)) session_start();
 
-    include_once "conexao.php";
-    include_once "classes/Adocao.php"
+    require_once "conexao.php";
+    require_once "classes/Adocao.php"
 
 ?>
 <!DOCTYPE html>

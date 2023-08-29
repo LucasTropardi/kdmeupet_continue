@@ -2,7 +2,7 @@
   if (!isset($_SESSION)) session_start();
   date_default_timezone_set('America/Sao_Paulo');
 
-  include_once "conexao.php";
+  require_once "conexao.php";
 
   if ($_FILES['formFile']['name'] != "") {
       $anexo = pathinfo($_FILES['formFile']['name']);

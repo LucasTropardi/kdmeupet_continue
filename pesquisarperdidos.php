@@ -2,7 +2,7 @@
 
     if (!isset($_SESSION)) session_start();
 
-    include_once"conexao.php";
+    require_once"conexao.php";
 
     $tipoanimal = $_POST['tipo'];
     $tiporaca = $_POST['raca'];

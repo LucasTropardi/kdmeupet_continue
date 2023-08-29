@@ -9,7 +9,7 @@ if (!isset($_SESSION['gerenciadorId'])) {
      exit;
 }
 
-include_once "conexao.php";
+require_once "conexao.php";
 
 // verifica se ID passado é válido
 if (!isset($_GET['p_id']) || $_GET['p_id'] == null || $_GET['p_id'] <= 0) {

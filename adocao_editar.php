@@ -9,7 +9,7 @@
 if (!isset($_SESSION)) session_start();
 date_default_timezone_set('America/Sao_Paulo');
 
-include_once "conexao.php";
+require_once "conexao.php";
 
 // verifica se ID passado é válido
 if (!isset($_GET['p_id']) || empty($_GET['p_id']) || !is_numeric($_GET['p_id']) || $_GET['p_id'] <= 0) {

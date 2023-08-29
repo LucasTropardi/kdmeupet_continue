@@ -35,7 +35,7 @@
       $senha = md5(time());
 
       // verificar se existe usuario com sub
-      include_once("conexao.php");
+      require_once("conexao.php");
 
       $query = "SELECT * FROM `cadastro_usuario` WHERE `id_google` = :sub LIMIT 1";
       $stmt = $pdo->prepare($query);

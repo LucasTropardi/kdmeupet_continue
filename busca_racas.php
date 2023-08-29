@@ -1,5 +1,5 @@
 <?php
-    include_once"conexao.php";
+    require_once"conexao.php";
     $tipo_id = $_POST["tipo_id"];
     try{
         $query = "SELECT r_id, r_nome FROM cadastro_raca WHERE r_tipos = $tipo_id ORDER BY r_nome ASC";

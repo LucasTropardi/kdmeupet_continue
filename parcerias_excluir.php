@@ -8,7 +8,7 @@
         exit;
     }
 
-    include_once "conexao.php";
+    require_once "conexao.php";
 
     // verifica se ID passado é válido
     if (!isset($_GET['id']) || $_GET['id'] == null || $_GET['id'] <= 0) {

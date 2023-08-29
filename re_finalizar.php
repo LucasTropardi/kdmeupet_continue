@@ -1,5 +1,5 @@
 <?php 
-    include_once "conexao.php";
+    require_once "conexao.php";
 
     $re_id = intval($_GET['c_id']);
     

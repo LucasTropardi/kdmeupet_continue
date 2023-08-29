@@ -3,7 +3,7 @@
 if (!isset($_SESSION)) session_start();
 date_default_timezone_set('America/Sao_Paulo');
 
-include_once "conexao.php";
+require_once "conexao.php";
 
 if (!isset($_SESSION['usuarioId'])) {
     session_destroy();

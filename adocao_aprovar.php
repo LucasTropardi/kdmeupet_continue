@@ -9,7 +9,7 @@ if (!isset($_SESSION['gerenciadorId'])) {
     exit;
 }
 
-include_once "conexao.php";
+require_once "conexao.php";
 
 if (!isset($_GET['p_id']) || $_GET['p_id'] == null || $_GET['p_id'] <= 0) {
     $_SESSION['msgContent'] = '<div class="alert alert-danger" role="alert">

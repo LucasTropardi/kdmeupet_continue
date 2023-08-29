@@ -1,7 +1,7 @@
 <?php
     session_start();
 
-    include_once("conexao.php");
+    require_once("conexao.php");
     
     if(isset($_POST['u_email']) && isset($_POST['u_senha'])) {
         $usuario = $_POST['u_email'];

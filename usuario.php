@@ -7,7 +7,7 @@
         header("Location: user.php"); exit;
     }
 
-    include("conexao.php");
+    require("conexao.php");
 ?>
 
 <!DOCTYPE html>

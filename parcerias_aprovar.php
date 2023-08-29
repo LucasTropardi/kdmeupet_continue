@@ -8,7 +8,7 @@
         exit;
     }
 
-    include_once "conexao.php";
+    require_once "conexao.php";
 
     if (!isset($_GET['id']) || $_GET['id'] == null || $_GET['id'] <= 0) {
         $_SESSION['msgContent'] = '<div class="alert alert-danger" role="alert">

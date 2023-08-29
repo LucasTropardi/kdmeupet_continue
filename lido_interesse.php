@@ -7,7 +7,7 @@
         header("Location: admin.php"); exit;
     }
 
-    include_once "conexao.php";
+    require_once "conexao.php";
 
     if (!isset($_GET['i_id']) || $_GET['i_id'] == null || $_GET['i_id'] <= 0) {
         $_SESSION['msgContent'] = '<div class="alert alert-danger" role="alert">
