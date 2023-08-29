@@ -66,10 +66,18 @@
 
             <div class="table-responsive">                  
             <?php  
-                $query = "SELECT * FROM `cadastro_usuario` WHERE `u_id` = " . $_SESSION['usuarioId'] . " LIMIT 1";
-                $select = $mysqli -> query($query);
+                try {
+                    $usuarioId = $_SESSION['usuarioId'];
+                    $query = "SELECT * FROM `cadastro_usuario` WHERE `u_id` = :usuarioId LIMIT 1";
                 
-                $usuario = mysqli_fetch_assoc($select);
+                    $stmt = $pdo->prepare($query);
+                    $stmt->bindParam(':usuarioId', $usuarioId);
+                    $stmt->execute();
+                
+                    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+                } catch (PDOException $e) {
+                    echo "Erro: " . $e->getMessage();
+                }                
 
                 if (!isset($usuario)) {
                     unset($_SESSION);

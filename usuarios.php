@@ -116,9 +116,14 @@
               </thead>
               <tbody>
                <?php 
-                $consulta = "SELECT * FROM cadastro_usuario ORDER BY u_id ASC";
-                $sql = $mysqli->query($consulta) or die($mysqli->error);
-                while($dado = $sql->fetch_array())    
+                try {
+                  $consulta = "SELECT * FROM cadastro_usuario ORDER BY u_id ASC";
+                  $stmt = $pdo->query($consulta);
+                } catch (PDOException $e) {
+                  echo "Erro: " . $e->getMessage();
+                  die();
+                }  
+                while($dado = $stmt->fetch(PDO::FETCH_ASSOC))    
                 {              
                 ?> 
                 <tr>

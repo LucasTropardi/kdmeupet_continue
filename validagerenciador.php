@@ -4,28 +4,33 @@
     include_once("conexao.php");
 
     if((isset($_POST['g_email'])) && (isset($_POST['g_senha']))){
-        $usuario = mysqli_real_escape_string($mysqli, $_POST['g_email']); 
-        $senha = mysqli_real_escape_string($mysqli, $_POST['g_senha']);
+        $usuario = $_POST['g_email']; 
+        $senha = $_POST['g_senha'];
         $senha = md5($senha);
             
-        $result_gerenciador = "SELECT * FROM cadastro_gerenciador WHERE g_email = '$usuario' && g_senha = '$senha' LIMIT 1";
-        $resultado_gerencia = mysqli_query($mysqli, $result_gerenciador);
-        $resultado = mysqli_fetch_assoc($resultado_gerencia);     
-        
-        
-        if(isset($resultado)){
-            $_SESSION['gerenciadorId'] = $resultado['g_id'];
-            $_SESSION['gerenciadorNome'] = $resultado['g_nome'];
-            $_SESSION['gerenciadorEmail'] = $resultado['g_email'];
-            header("Location: gerenciamento.php");
-                    
-        }else{    
-            $_SESSION['loginErro'] = "Usuário ou senha Inválido";
+        try {
+            $query = "SELECT * FROM cadastro_gerenciador WHERE g_email = :usuario AND g_senha = :senha LIMIT 1";
+            $stmt = $pdo->prepare($query);
+            $stmt->bindParam(':usuario', $usuario);
+            $stmt->bindParam(':senha', $senha);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($resultado !== false) {
+                $_SESSION['gerenciadorId'] = $resultado['g_id'];
+                $_SESSION['gerenciadorNome'] = $resultado['g_nome'];
+                $_SESSION['gerenciadorEmail'] = $resultado['g_email'];
+                header("Location: gerenciamento.php");
+            } else {
+                $_SESSION['loginErro'] = "Usuário ou senha inválidos.";
+                header("Location: admin.php");
+            }
+        } catch (PDOException $e) {
+            $_SESSION['loginErro'] = "Erro ao realizar o login.";
             header("Location: admin.php");
         }
-            
-    }else{
-        $_SESSION['loginErro'] = "Usuário ou senha Inválido";
+    } else {
+        $_SESSION['loginErro'] = "Usuário ou senha inválidos.";
         header("Location: admin.php");
     }
     

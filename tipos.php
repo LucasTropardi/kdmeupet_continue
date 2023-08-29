@@ -79,9 +79,14 @@
               </thead>
               <tbody>
                <?php 
-                $consulta = "SELECT * FROM cadastro_tipo ORDER BY t_id ASC";
-                $sql = $mysqli->query($consulta) or die($mysqli->error);
-                while($dado = $sql->fetch_array())    
+                try {
+                  $consulta = "SELECT * FROM cadastro_tipo ORDER BY t_id ASC";
+                  $stmt_consulta = $pdo->prepare($consulta);
+                  $stmt_consulta->execute();
+                } catch (PDOException $e) {
+                  echo "Erro: " . $e->getMessage();
+                }
+                while($dado = $stmt_consulta->fetch(PDO::FETCH_ASSOC))    
                 {              
                 ?> 
                 <tr>

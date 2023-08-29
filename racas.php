@@ -62,9 +62,14 @@
                 <select class="form-control" id="tipo" name="tipo">               
                          <option selected>Selecione</option>
                           <?php 
-                          $consulta = "SELECT * FROM cadastro_tipo t ORDER BY t_id ASC";
-                          $sql = $mysqli->query($consulta) or die($mysqli->error);
-                          while($tipo = $sql->fetch_array())    
+                          try {
+                            $consulta = "SELECT * FROM cadastro_tipo t ORDER BY t_id ASC";
+                            $stmt_consulta = $pdo->prepare($consulta);
+                            $stmt_consulta->execute();
+                          } catch (PDOException $e) {
+                            echo "Erro: " . $e->getMessage();
+                          }
+                          while($tipo = $stmt_consulta->fetch(PDO::FETCH_ASSOC))    
                           {              
                           ?> 
                           <option value="<?php echo $tipo['t_id']; ?>"><?php echo $tipo['t_nome']; ?></option>
@@ -95,9 +100,14 @@
               </thead>
               <tbody>
                <?php 
-                $consulta = "SELECT r.*, t.t_nome FROM cadastro_raca r INNER JOIN cadastro_tipo t on t.t_id = r.r_tipos ORDER BY r_id ASC";
-                $sql = $mysqli->query($consulta) or die($mysqli->error);
-                while($dado = $sql->fetch_array())    
+                try {
+                  $consulta = "SELECT r.*, t.t_nome FROM cadastro_raca r INNER JOIN cadastro_tipo t on t.t_id = r.r_tipos ORDER BY r_id ASC";
+                  $stmt_consulta = $pdo->prepare($consulta);
+                  $stmt_consulta->execute();
+                } catch (PDOException $e) {
+                  echo "Erro: " . $e->getMessage();
+                }
+                while($dado = $stmt_consulta->fetch(PDO::FETCH_ASSOC))    
                 {              
                 ?> 
                 <tr>

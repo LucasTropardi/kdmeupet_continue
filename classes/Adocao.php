@@ -2,7 +2,7 @@
 
 class Adocao {
 
-    public static function buscaTodos($mysqli)
+    public static function buscaTodos($pdo)
     {
         $query = "SELECT
                       a.*,
@@ -23,16 +23,16 @@ class Adocao {
                   ORDER BY
                       a.p_nome ASC";
 
-        $sql = $mysqli->query($query) or die($mysqli->error);
+        $stmt = $pdo->query($query);
         
         $animais = array();
-        while ($row = $sql->fetch_array(MYSQLI_ASSOC)) {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             array_push($animais, $row);
         }
         return $animais;
     }
 
-    public static function buscaTodosDisponiveis($mysqli)
+    public static function buscaTodosDisponiveis($pdo)
     {
         $query = "SELECT
                       a.*,
@@ -55,16 +55,16 @@ class Adocao {
                   ORDER BY
                       a.p_nome ASC";
 
-        $sql = $mysqli->query($query) or die($mysqli->error);
+        $stmt = $pdo->query($query);
         
         $animais = array();
-        while ($row = $sql->fetch_array(MYSQLI_ASSOC)) {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             array_push($animais, $row);
         }
         return $animais;
     }
 
-    public static function buscaPorId($mysqli, $id)
+    public static function buscaPorId($pdo, $id)
     {
         $query = "SELECT
                       a.*,
@@ -82,18 +82,20 @@ class Adocao {
                       a.p_tamanho = tm.t_id
                   INNER JOIN `cadastro_cor` c ON
                       a.p_cor = c.c_id
-                  WHERE a.p_id = $id";
+                  WHERE a.p_id = :id";
 
-        $sql = $mysqli->query($query) or die($mysqli->error);
+        $stmt = $pdo->prepare($query);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
 
-        $result = $sql->fetch_array(MYSQLI_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             return $result;
         }
         return false;
     }
 
-    public static function buscaPorUsuario($mysqli, $id)
+    public static function buscaPorUsuario($pdo, $id)
     {
         $query = "SELECT
                       a.*,
@@ -116,15 +118,17 @@ class Adocao {
                   INNER JOIN `cadastro_cor` c ON
                       a.p_cor = c.c_id
                   WHERE
-                      i.i_usuario = $id
+                      i.i_usuario = :id
                   ORDER BY
                       a.p_status,
                       a.p_id DESC";
 
-        $sql = $mysqli->query($query) or die($mysqli->error);
-                
+        $stmt = $pdo->prepare($query);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        
         $animais = array();
-        while ($row = $sql->fetch_array(MYSQLI_ASSOC)) {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             array_push($animais, $row);
         }
         return $animais;

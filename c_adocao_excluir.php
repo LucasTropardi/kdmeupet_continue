@@ -9,43 +9,49 @@ if (!isset($_SESSION['gerenciadorId'])) {
      exit;
 }
 
-include_once"conexao.php";
+include_once "conexao.php";
 
 // verifica se ID passado é válido
 if (!isset($_GET['p_id']) || $_GET['p_id'] == null || $_GET['p_id'] <= 0) {
     $_SESSION['msgContent'] = '<div class="alert alert-danger" role="alert">
     Não é possível excluir!</div>';
-    header("Location: ../adminadocoes.php"); exit;
+    header("Location: ../adminadocoes.php");
+    exit;
 }
 
 $p_id = $_GET['p_id'];
 
 // verifica se existe
-$query = "SELECT * FROM `cadastro_adocao` WHERE `p_id` = $p_id";
-$select = $mysqli -> query($query);
+$query = "SELECT * FROM `cadastro_adocao` WHERE `p_id` = :p_id";
+$stmt = $pdo->prepare($query);
+$stmt->bindValue(':p_id', $p_id);
+$stmt->execute();
 
-if (mysqli_num_rows($select) == 0) {
+if ($stmt->rowCount() == 0) {
     $_SESSION['msgContent'] = '<div class="alert alert-danger" role="alert">
     Cadastro não encontrado!</div>';
-    header("Location: ../adminadocoes.php"); exit;    
-} 
+    header("Location: ../adminadocoes.php");
+    exit;
+}
 
-$adocao = $select->fetch_array();
+$adocao = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // exclui
-$query = "DELETE FROM `cadastro_adocao` WHERE `p_id` = " . $adocao['p_id'];
-$delete = $mysqli -> query($query);
+$query = "DELETE FROM `cadastro_adocao` WHERE `p_id` = :p_id";
+$stmt = $pdo->prepare($query);
+$stmt->bindValue(':p_id', $adocao['p_id']);
+$delete = $stmt->execute();
 
 if ($delete){
     $_SESSION['msgContent'] = '<div class="alert alert-success" role="alert">
     Cadastro excluído com sucesso!</div>';
     unlink('upload/' . $adocao['imagem']);
 } else {
-    $msg_erro = 'Query: <code>' . $query . '</code><br>Erro: <code>' . $mysqli->error . '</code>';
+    $msg_erro = 'Query: <code>' . $query . '</code><br>Erro: ' . implode(', ', $stmt->errorInfo());
 
     $_SESSION['msgContent'] = '<div class="alert alert-danger" role="alert">
-    Ocorreu um erro excluir. Por favor, tente novamente!<br>' .
+    Ocorreu um erro ao excluir. Por favor, tente novamente!<br>' .
     $msg_erro . '</div>';
 }
-header("Location: ../adminadocoes.php"); exit; 
-
+header("Location: ../adminadocoes.php");
+exit;

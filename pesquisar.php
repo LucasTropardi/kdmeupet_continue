@@ -71,9 +71,15 @@
                         <select class="form-select" id="tipo" name="tipo" required  >
                             <option disabled selected value="">Selecione uma Opção</option>
                             <?php 
-                                $query = "SELECT * FROM cadastro_tipo ORDER BY t_nome ASC";
-                                $sql = $mysqli->query($query) or die($mysqli->error);
-                                while ($tp = $sql->fetch_array()){              
+                                try {
+                                    $query = "SELECT * FROM cadastro_tipo ORDER BY t_nome ASC";
+                                    $stmt = $pdo->prepare($query);
+                                    $stmt->execute();
+                                } catch (PDOException $e) {
+                                    echo "Erro: " . $e->getMessage();
+                                    die();
+                                }    
+                                while ($tp = $stmt->fetch(PDO::FETCH_ASSOC)) {              
                             ?> 
                             <option value="<?php echo $tp["t_id"]; ?>">
                                 <?php echo $tp["t_nome"]; ?>
@@ -98,9 +104,15 @@
                         <select class="form-select" id="tamanho" name="tamanho" required>
                             <option disabled selected value="">Selecione uma Opção</option>
                             <?php 
-                                $query = "SELECT * FROM cadastro_tamanho ORDER BY t_nometm ASC";
-                                $sql = $mysqli->query($query) or die($mysqli->error);
-                                while ($tm = $sql->fetch_array()){              
+                                try {
+                                    $query = "SELECT * FROM cadastro_tamanho ORDER BY t_nometm ASC";
+                                    $stmt = $pdo->prepare($query);
+                                    $stmt->execute();
+                                } catch (PDOException $e) {
+                                    echo "Erro: " . $e->getMessage();
+                                    die();
+                                }
+                                while ($tm = $stmt->fetch(PDO::FETCH_ASSOC)) {              
                             ?> 
                             <option value="<?php echo $tm["t_id"]; ?>">
                                 <?php echo $tm["t_nometm"]; ?>
@@ -114,10 +126,16 @@
                         <label for="cor" class="form-label">Cor: </label>
                         <select class="form-select" id="cor" name="cor" required>
                             <option disabled selected value="">Selecione uma Opção</option>
-                            <?php 
-                                $query = "SELECT * FROM cadastro_cor ORDER BY c_cor ASC";
-                                $sql = $mysqli->query($query) or die($mysqli->error);
-                                while ($cr = $sql->fetch_array()){              
+                            <?php
+                                try { 
+                                    $query = "SELECT * FROM cadastro_cor ORDER BY c_cor ASC";
+                                    $stmt = $pdo->prepare($query);
+                                    $stmt->execute();
+                                } catch (PDOException $e) {
+                                    echo "Erro: " . $e->getMessage();
+                                    die();
+                                }
+                                while ($cr = $stmt->fetch(PDO::FETCH_ASSOC)) {              
                             ?> 
                             <option value="<?php echo $cr["c_id"]; ?>">
                                 <?php echo $cr["c_cor"]; ?>
@@ -138,39 +156,40 @@
 
 
                 <?php
-                    $query = "SELECT count(a.c_id) total FROM `cadastro_animal` a WHERE a.c_situacao = 1 AND a.c_finalizado = 0";                                     
-                    $sql_achados_tot = $mysqli->query($query) or die($mysqli->error);
-                    $achados_tot =  $sql_achados_tot->fetch_array()['total'];              
-                    $query_achados = "SELECT a.*,
-                                             t.t_nometm,
-                                             r.r_nome,
-                                             c.c_cor,
-                                             u.u_nomecompleto,
-                                             tp.t_nome
-                                        FROM `cadastro_animal` a,
-                                             `cadastro_tamanho` t,
-                                             `cadastro_raca` r,
-                                             `cadastro_cor` c,
-                                             `cadastro_usuario` u,
-                                             `cadastro_tipo` tp
-                                       WHERE a.c_tamanho = t.t_id
-                                         AND a.c_raca = r.r_id
-                                         AND a.id_cor = c.c_id
-                                         AND a.c_usuario = u.u_id
-                                         AND r.r_tipos = tp.t_id                                                                                 
-                                         AND a.c_situacao = 1
-                                         AND a.c_finalizado = 0
-                                         AND tp.t_id = $tipoanimal
-                                         AND r.r_id = $tiporaca
-                                         AND t.t_id = $tamanhoanimal 
-                                         AND c.c_id = $coranimal 
-                                    ORDER BY a.c_data DESC";
-                $sql_achados = $mysqli->query($query_achados) or die($mysqli->error);
+                    try {
+                        $query = "SELECT count(a.c_id) total FROM `cadastro_animal` a WHERE a.c_situacao = 1 AND a.c_finalizado = 0";                                     
+                        $stmt = $pdo->prepare($query);
+                        $stmt->execute();
+                        $achados_tot =  $stmt->fetch(PDO::FETCH_ASSOC)['total'];              
+                        $query_achados = "SELECT a.*,
+                                            t.t_nometm,
+                                            r.r_nome,
+                                            c.c_cor,
+                                            u.u_nomecompleto,
+                                            tp.t_nome
+                                            FROM `cadastro_animal` a
+                                            JOIN `cadastro_tamanho` t ON a.c_tamanho = t.t_id
+                                            JOIN `cadastro_raca` r ON a.c_raca = r.r_id
+                                            JOIN `cadastro_cor` c ON a.id_cor = c.c_id
+                                            JOIN `cadastro_usuario` u ON a.c_usuario = u.u_id
+                                            JOIN `cadastro_tipo` tp ON r.r_tipos = tp.t_id
+                                            WHERE a.c_situacao = 1 AND a.c_finalizado = 0
+                                            AND tp.t_id = $tipoanimal
+                                            AND r.r_id = $tiporaca
+                                            AND t.t_id = $tamanhoanimal 
+                                            AND c.c_id = $coranimal 
+                                            ORDER BY a.c_data DESC";
+                        $stmt_achados = $pdo->prepare($query_achados);
+                        $stmt_achados->execute();
+                    } catch (PDOException $e) {
+                        echo "Erro: " . $e->getMessage();
+                        die();
+                    }
                 ?>
                 <div class="row">
                     <?php
                         $achados_row = 1;
-                        while ($achados = $sql_achados->fetch_array()){              
+                        while ($achados = $stmt_achados->fetch(PDO::FETCH_ASSOC)) {              
                     ?>
                     <div class="col-lg-4 col-sm-6 mb-4">
                         
@@ -218,10 +237,16 @@
 
         <!-- ACHADOS Modals-->
         <?php
-            $sql_achados = $mysqli->query($query_achados) or die($mysqli->error);
+            try {
+                $stmt_achados = $pdo->prepare($query_achados);
+                $stmt_achados->execute();
+            } catch (PDOException $e) {
+                echo "Erro: " . $e->getMessage();
+                die();
+            }
 
             $achados_row = 1;
-            while ($achados = $sql_achados->fetch_array()){
+            while ($achados = $stmt_achados->fetch(PDO::FETCH_ASSOC)) {
         ?>
         <div class="portfolio-modal modal fade" id="achadosModal<?php echo $achados_row; ?>" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog">

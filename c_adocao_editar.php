@@ -1,25 +1,43 @@
 <?php
 
-  if (!isset($_SESSION)) session_start();
+if (!isset($_SESSION)) session_start();
 
-  include_once"conexao.php";
+include_once "conexao.php";
 
-  if (!isset($_SESSION['gerenciadorId'])) {
-       session_destroy();      
-       header("Location: admin.php"); exit;
-  }
-  $p_id = $_GET['p_id'];
+if (!isset($_SESSION['gerenciadorId'])) {
+    session_destroy();
+    header("Location: admin.php");
+    exit;
+}
 
-  $query = "SELECT * FROM `cadastro_adocao` WHERE `p_id` = $p_id";
-  $select = $mysqli -> query($query);
+if (isset($_GET['p_id']) && is_numeric($_GET['p_id'])) {
+    $p_id = intval($_GET['p_id']);
 
-  if (mysqli_num_rows($select) == 0) {
-      $_SESSION['msgContent'] = '<div class="alert alert-danger" role="alert">
-      Animal não encontrada!</div>';
-      header("Location: ../adminadocoes.php"); exit;    
-  } 
+    try {
+      $query = "SELECT * FROM cadastro_adocao WHERE p_id = :p_id";
+      $stmt = $pdo->prepare($query);
+      $stmt->bindValue(':p_id', $p_id, PDO::PARAM_INT);
+      $stmt->execute();
+    } catch (PDOException $e) {
+      echo "Erro: " . $e->getMessage();
+      die();
+    }
 
-  $adocao = $select->fetch_array();
+    if ($stmt->rowCount() == 0) {
+        $_SESSION['msgContent'] = '<div class="alert alert-danger" role="alert">
+        Animal não encontrado!</div>';
+        header("Location: ../adminadocoes.php");
+        exit;
+    }
+
+    $adocao = $stmt->fetch(PDO::FETCH_ASSOC);
+} else {
+    $_SESSION['msgContent'] = '<div class="alert alert-danger" role="alert">
+    Parâmetro inválido!</div>';
+    header("Location: ../adminadocoes.php");
+    exit;
+}
+
 ?>
 
 <html lang="pt">

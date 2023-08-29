@@ -5,23 +5,24 @@ include_once"conexao.php";
 ?>
 
 <html>   
-
     <body>  
-    <?php        
+        <?php
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                $nome = $_POST["nome"];
+                $tipo = $_REQUEST['tipo'];
 
-    $nome = $_POST["nome"]; 
-    $tipo = $_REQUEST['tipo']; 
+                try {
+                    $query = "INSERT INTO cadastro_raca (r_nome, r_tipos) VALUES (:nome, :tipo)";
+                    $stmt = $pdo->prepare($query);
+                    $stmt->bindParam(':nome', $nome);
+                    $stmt->bindParam(':tipo', $tipo);
+                    $stmt->execute();
 
-    $raca = "INSERT INTO cadastro_raca (r_nome, r_tipos) VALUES ('$nome', '$tipo')";
-
-    if (mysqli_query($mysqli,$raca)) {
-        echo "<script>alert('Cadastrado com sucesso!'); window.location = 'racas.php';</script>";        
-    }else{
-        echo "Deu erro: " . $raca . "<br>" . mysqli_error($raca);
-    }
-    mysqli_close($raca);  
-
-    ?>
-    
+                    echo "<script>alert('Cadastrado com sucesso!'); window.location = 'racas.php';</script>";
+                } catch (PDOException $e) {
+                    echo "Deu erro: " . $e->getMessage();
+                }
+            }
+        ?>
     </body>    
 </html>

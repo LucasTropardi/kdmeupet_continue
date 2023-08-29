@@ -70,7 +70,35 @@
                 </div>
                 
                 <?php
-                    $lista_animais = Adocao::buscaTodosDisponiveis($mysqli);
+                    try {
+                        $query = "SELECT
+                                    a.*,
+                                    t.t_nome AS tipo,
+                                    r.r_nome AS raca,
+                                    tm.t_nometm AS tamanho,
+                                    c.c_cor AS cor
+                                  FROM
+                                    `cadastro_adocao` a
+                                  INNER JOIN `cadastro_tipo` t ON
+                                    a.p_tipo = t.t_id
+                                  INNER JOIN `cadastro_raca` r ON
+                                    a.p_raca = r.r_id AND t.t_id = r.r_tipos
+                                  INNER JOIN `cadastro_tamanho` tm ON
+                                    a.p_tamanho = tm.t_id
+                                  INNER JOIN `cadastro_cor` c ON
+                                    a.p_cor = c.c_id
+                                  WHERE
+                                    a.p_status = 0
+                                  ORDER BY
+                                    a.p_nome ASC";
+                    
+                        $stmt = $pdo->prepare($query);
+                        $stmt->execute();
+                    
+                        $lista_animais = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    } catch (PDOException $e) {
+                        echo "Erro: " . $e->getMessage();
+                    }
                 ?>
                 <div class="row">
                     <?php

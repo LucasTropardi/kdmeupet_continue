@@ -7,20 +7,21 @@ include_once"conexao.php";
 <html>   
 
     <body>  
-    <?php        
+        <?php
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                $nome = $_POST["nome"];
 
-    $nome = $_POST["nome"]; 
+                try {
+                    $query = "INSERT INTO cadastro_tipo (t_nome) VALUES (:nome)";
+                    $stmt = $pdo->prepare($query);
+                    $stmt->bindParam(':nome', $nome);
+                    $stmt->execute();
 
-    $tipo = "INSERT INTO cadastro_tipo (t_nome) VALUES ('$nome')";
-
-    if (mysqli_query($mysqli,$tipo)) {
-        echo "<script>alert('Cadastrado com sucesso!'); window.location = 'tipos.php';</script>";        
-    }else{
-        echo "Deu erro: " . $tipo . "<br>" . mysqli_error($tipo);
-    }
-    mysqli_close($tipo);  
-
-    ?>
-    
+                    echo "<script>alert('Cadastrado com sucesso!'); window.location = 'tipos.php';</script>";
+                } catch (PDOException $e) {
+                    echo "Deu erro: " . $e->getMessage();
+                }
+            }
+        ?>    
     </body>    
 </html>

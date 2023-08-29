@@ -76,7 +76,7 @@
 
                 <div class="d-flex flex-row justify-content-center align-items-center gap-4">
                     <!-- botao google -->
-                    <script src="https://accounts.google.com/gsi/client" async defer></script>
+                    <!-- <script src="https://accounts.google.com/gsi/client" async defer></script>
                     <div id="g_id_onload"
                         data-client_id="580738356507-aippluacp00orvercqnlshsgo6fo2sok.apps.googleusercontent.com"
                         data-login_uri="https://kdmeupetplis.com.br/validausuariogoogle.php"
@@ -90,7 +90,7 @@
                         data-shape="rectangular"
                         data-logo_alignment="left">
                     </div> 
-                    <!-- fim botao google -->
+                    fim botao google -->
 
                 <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button> 
 

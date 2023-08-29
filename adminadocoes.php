@@ -124,9 +124,14 @@
                     <select class="form-select" id="tipo" name="tipo">
                         <option disabled selected value="">Selecione uma Opção</option>
                         <?php 
-                            $query = "SELECT * FROM cadastro_tipo ORDER BY t_nome ASC";
-                            $sql = $mysqli->query($query) or die($mysqli->error);
-                            while ($tp = $sql->fetch_array()){              
+                            try {
+                              $query = "SELECT * FROM cadastro_tipo ORDER BY t_nome ASC";
+                              $stmt = $pdo->prepare($query);
+                              $stmt->execute();
+                            } catch (PDOException $e) {
+                              echo "Erro: " . $e->getMessage();
+                            }
+                            while ($tp = $stmt->fetch(PDO::FETCH_ASSOC)) {              
                         ?> 
                         <option value="<?php echo $tp["t_id"]; ?>">
                             <?php echo $tp["t_nome"]; ?>
@@ -151,9 +156,14 @@
                     <select class="form-select" id="tamanho" name="tamanho">
                         <option disabled selected value="">Selecione uma Opção</option>
                         <?php 
-                            $query = "SELECT * FROM cadastro_tamanho ORDER BY t_nometm ASC";
-                            $sql = $mysqli->query($query) or die($mysqli->error);
-                            while ($tm = $sql->fetch_array()){              
+                            try {
+                              $query = "SELECT * FROM cadastro_tamanho ORDER BY t_nometm ASC";
+                              $stmt = $pdo->prepare($query);
+                              $stmt->execute();
+                            } catch (PDOException $e) {
+                              echo "Erro: " . $e->getMessage();
+                            }
+                            while ($tm = $stmt->fetch(PDO::FETCH_ASSOC)) {              
                         ?> 
                         <option value="<?php echo $tm["t_id"]; ?>">
                             <?php echo $tm["t_nometm"]; ?>
@@ -168,9 +178,14 @@
                     <select class="form-select" id="cor" name="cor">
                         <option disabled selected value="">Selecione uma Opção</option>
                         <?php 
-                            $query = "SELECT * FROM cadastro_cor ORDER BY c_cor ASC";
-                            $sql = $mysqli->query($query) or die($mysqli->error);
-                            while ($cr = $sql->fetch_array()){              
+                            try {
+                              $query = "SELECT * FROM cadastro_cor ORDER BY c_cor ASC";
+                              $stmt = $pdo->prepare($query);
+                              $stmt->execute();
+                            } catch (PDOException $e) {
+                              echo "Erro: " . $e->getMessage();
+                            }
+                            while ($cr = $stmt->fetch(PDO::FETCH_ASSOC)) {              
                         ?> 
                         <option value="<?php echo $cr["c_id"]; ?>">
                             <?php echo $cr["c_cor"]; ?>
@@ -201,9 +216,14 @@
                 <div class="table-responsive">
                 <table class="table table-striped table-sm">
                 <?php 
-                    $consulta = "SELECT * FROM cadastro_adocao ORDER BY p_nome ASC";
-                    $sql = $mysqli->query($consulta) or die($mysqli->error);
-                    $conta = mysqli_num_rows($sql);
+                    try {
+                      $consulta = "SELECT * FROM cadastro_adocao ORDER BY p_nome ASC";
+                      $stmt_consulta = $pdo->prepare($consulta);
+                      $stmt_consulta->execute();
+                    } catch (PDOException $e) {
+                      echo "Erro: " . $e->getMessage();
+                    }
+                    $conta = $stmt_consulta->rowCount();
 
                     if($conta > 0)
                     {
@@ -224,7 +244,7 @@
                 </thead>
                 <tbody>                
                     <?php                 
-                    while($dado = $sql->fetch_array())    
+                    while($dado = $stmt_consulta->fetch(PDO::FETCH_ASSOC))    
                     {              
                     ?>
                     <tr>                    
@@ -240,9 +260,14 @@
                     <td><?php echo $dado["p_idade"]; ?></td>
                     <td>                
                     <?php 
-                       $tipo = "SELECT  * from cadastro_tipo r";
-                       $tabela = $mysqli->query($tipo) or die($mysqli->error);
-                       while($row = $tabela->fetch_array())
+                       try { 
+                        $tipo = "SELECT * from cadastro_tipo r";
+                        $stmt = $pdo->prepare($tipo);
+                        $stmt->execute();
+                       } catch (PDOException $e) {
+                        echo "Erro: " . $e->getMessage();
+                       }
+                       while($row = $stmt->fetch(PDO::FETCH_ASSOC))
                        {          
                         if ($dado["p_tipo"] == $row['t_id'])         
                           {                     
@@ -251,9 +276,14 @@
                     </td>                     
                     <td>                
                     <?php 
-                       $racas = "SELECT  * from cadastro_raca r";
-                       $tabela = $mysqli->query($racas) or die($mysqli->error);
-                       while($row = $tabela->fetch_array())
+                       try { 
+                        $racas = "SELECT  * from cadastro_raca r";
+                        $stmt = $pdo->prepare($racas);
+                        $stmt->execute();
+                       } catch (PDOException $e) {
+                        echo "Erro: " . $e->getMessage();
+                       }
+                       while($row = $stmt->fetch(PDO::FETCH_ASSOC))
                        {          
                         if ($dado["p_raca"] == $row['r_id'])         
                           {                     
@@ -262,9 +292,14 @@
                     </td>
                     <td>
                     <?php 
-                       $tamanho = "SELECT  * from cadastro_tamanho t";
-                       $tabela = $mysqli->query($tamanho) or die($mysqli->error);
-                       while($tam = $tabela->fetch_array())
+                       try {
+                        $tamanho = "SELECT  * from cadastro_tamanho t";
+                        $stmt = $pdo->prepare($tamanho);
+                        $stmt->execute();
+                       } catch (PDOException $e) {
+                        echo "Erro: " . $e->getMessage();
+                       }
+                       while($tam = $stmt->fetch(PDO::FETCH_ASSOC))
                        {          
                         if ($dado["p_tamanho"] == $tam['t_id'])         
                           {                     
@@ -273,9 +308,14 @@
                     </td>    
                     <td>
                     <?php 
-                       $cor = "SELECT  * from cadastro_cor c";
-                       $tabela = $mysqli->query($cor) or die($mysqli->error);
-                       while($cores = $tabela->fetch_array())
+                       try {
+                        $cor = "SELECT  * from cadastro_cor c";
+                        $stmt = $pdo->prepare($cor);
+                        $stmt->execute();
+                       } catch (PDOException $e) {
+                        echo "Erro: " . $e->getMessage();
+                       }
+                       while($cores = $stmt->fetch(PDO::FETCH_ASSOC))
                        {          
                         if ($dado["p_cor"] == $cores['c_id'])         
                           {                     

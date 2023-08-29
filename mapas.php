@@ -62,32 +62,34 @@
               <div id="mapid" style="width: 100%; height: 600px;"></div>         
               
               <?php
-                    $query = "SELECT count(a.c_id) total FROM `cadastro_animal` a WHERE a.c_finalizado = 0 AND a.c_latitude is not null";
-                    $sql_animais_tot = $mysqli->query($query) or die($mysqli->error);
-                    $animais_tot =  $sql_animais_tot->fetch_array()['total'];              
+                try {    
+                    $query = "SELECT count(a.c_id) as total FROM `cadastro_animal` a WHERE a.c_finalizado = 0 AND a.c_latitude is not null";
+                    $stmt_animais_tot = $pdo->prepare($query);
+                    $stmt_animais_tot->execute();
+                    $animais_tot =  $stmt_animais_tot->fetch(PDO::FETCH_ASSOC)['total'];              
                     $query_animais = "SELECT a.*,
                                              t.t_nometm,
                                              r.r_nome,
                                              c.c_cor,
                                              u.u_nomecompleto,
                                              tp.t_nome
-                                        FROM `cadastro_animal` a,
-                                             `cadastro_tamanho` t,
-                                             `cadastro_raca` r,
-                                             `cadastro_cor` c,
-                                             `cadastro_usuario` u,
-                                             `cadastro_tipo` tp
-                                       WHERE a.c_tamanho = t.t_id
-                                         AND a.c_raca = r.r_id
-                                         AND a.id_cor = c.c_id
-                                         AND a.c_usuario = u.u_id
-                                         AND r.r_tipos = tp.t_id                                         
-                                         AND a.c_finalizado = 0
-                                    ORDER BY a.c_data DESC";
-                $sql_animais = $mysqli->query($query_animais) or die($mysqli->error);
-               ?>               
+                                     FROM `cadastro_animal` a
+                                     JOIN `cadastro_tamanho` t ON a.c_tamanho = t.t_id
+                                     JOIN `cadastro_raca` r ON a.c_raca = r.r_id
+                                     JOIN `cadastro_cor` c ON a.id_cor = c.c_id
+                                     JOIN `cadastro_usuario` u ON a.c_usuario = u.u_id
+                                     JOIN `cadastro_tipo` tp ON r.r_tipos = tp.t_id
+                                     WHERE a.c_finalizado = 0
+                                     ORDER BY a.c_data DESC";
+                    $stmt_animais = $pdo->prepare($query_animais);
+                    $stmt_animais->execute();
+                    } catch (PDOException $e) {
+                        echo "Erro: " . $e->getMessage();
+                        die();
+                    }
+                ?>               
 
-               <script>
+                <script>
 
                 var mymap = L.map('mapid').setView([-21.4209, -50.078], 14);   
 
@@ -107,8 +109,8 @@
                 });               
                    
                 <?php
-                        $animais_row = 1;
-                        while ($animais = $sql_animais->fetch_array()){              
+                    $animais_row = 1;
+                    while ($animais = $stmt_animais->fetch(PDO::FETCH_ASSOC)) {              
                 ?>
                 // DADOS MARCADOR PET PERDIDO
                 var pontos = [{"latitude":"-21.416483360170187","longitude":"-50.07927415722406", "nome":"teste"}];
@@ -127,12 +129,12 @@
                         <?php } ?>                       
                         ).addTo(mymap)
                         .bindPopup("<b><?php echo $animais['c_nomeanimal']; ?> - <?php echo $animais['r_nome']; ?></b><br>" +
-                        "<img src='upload/<?php if ($animais['c_foto'] != ""){ echo $animais['c_foto']; } else { echo "sem_imagem.png";}?>' style='width: 100px; height: 80px;'>");   
+                        "<img src='upload/<?php if ($animais['c_foto'] != ''){ echo $animais['c_foto']; } else { echo 'sem_imagem.png';}?>' style='width: 100px; height: 80px;'>");   
                     });
                 // FIM DADOS MARCADOR PET PERDIDO
                 <?php
-                        $animais_row ++;
-                        }
+                    $animais_row ++;
+                    }
                 ?>          
               
                 </script>            

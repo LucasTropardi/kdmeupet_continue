@@ -14,19 +14,24 @@
    * 
    */
 
-  if (!isset($_GET['id'])) {
-    header("Location: adocao.php"); exit;
-  }
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    header("Location: adocao.php");
+    exit;
+}
 
-  if (!isset($_SESSION['usuarioId'])) {
+if (!isset($_SESSION['usuarioId'])) {
     session_destroy();
-    header("Location: usuario.php"); exit;
-  }
+    header("Location: usuario.php");
+    exit;
+}
 
-  $animal = Adocao::buscaPorId($mysqli, $_GET['id']);
-  if (!$animal) {
-    header("Location: adocao.php"); exit;
-  }
+$id = intval($_GET['id']);
+$animal = Adocao::buscaPorId($pdo, $id);
+
+if (!$animal) {
+    header("Location: adocao.php");
+    exit;
+}
 
 ?>
 <!DOCTYPE html>

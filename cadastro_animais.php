@@ -137,9 +137,15 @@
                     <select class="form-select" id="tipo" name="tipo">
                         <option disabled selected value="">Selecione uma Opção</option>
                         <?php 
-                            $query = "SELECT * FROM cadastro_tipo ORDER BY t_nome ASC";
-                            $sql = $mysqli->query($query) or die($mysqli->error);
-                            while ($tp = $sql->fetch_array()){              
+                            try {
+                                $query = "SELECT * FROM cadastro_tipo ORDER BY t_nome ASC";
+                                $stmt = $pdo->prepare($query);
+                                $stmt->execute();
+                            } catch (PDOException $e) {
+                                echo "Erro: " . $e->getMessage();
+                                die();
+                            }
+                            while ($tp = $stmt->fetch(PDO::FETCH_ASSOC)) {              
                         ?> 
                         <option value="<?php echo $tp["t_id"]; ?>">
                             <?php echo $tp["t_nome"]; ?>
@@ -162,9 +168,16 @@
                     <select class="form-select" id="tamanho" name="tamanho">
                         <option disabled selected value="">Selecione uma Opção</option>
                         <?php 
-                            $query = "SELECT * FROM cadastro_tamanho ORDER BY t_nometm ASC";
-                            $sql = $mysqli->query($query) or die($mysqli->error);
-                            while ($tm = $sql->fetch_array()){              
+                            try {
+                                $query = "SELECT * FROM cadastro_tamanho ORDER BY t_nometm ASC";
+                                $stmt = $pdo->prepare($query);
+                                $stmt->execute();
+                            } catch (PDOException $e) {
+                                echo "Erro: " . $e->getMessage();
+                                die();
+                            }
+
+                            while ($tm = $stmt->fetch(PDO::FETCH_ASSOC)) {              
                         ?> 
                         <option value="<?php echo $tm["t_id"]; ?>">
                             <?php echo $tm["t_nometm"]; ?>
@@ -179,9 +192,15 @@
                     <select class="form-select" id="cor" name="cor">
                         <option disabled selected value="">Selecione uma Opção</option>
                         <?php 
-                            $query = "SELECT * FROM cadastro_cor ORDER BY c_cor ASC";
-                            $sql = $mysqli->query($query) or die($mysqli->error);
-                            while ($cr = $sql->fetch_array()){              
+                            try {
+                                $query = "SELECT * FROM cadastro_cor ORDER BY c_cor ASC";
+                                $stmt = $pdo->prepare($query);
+                                $stmt->execute();
+                            } catch (PDOException $e) {
+                                echo "Erro: " . $e->getMessage();
+                                die();
+                            }    
+                            while ($cr = $stmt->fetch(PDO::FETCH_ASSOC)) {              
                         ?> 
                         <option value="<?php echo $cr["c_id"]; ?>">
                             <?php echo $cr["c_cor"]; ?>

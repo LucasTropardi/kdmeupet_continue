@@ -55,9 +55,15 @@
                 <div class="table-responsive">
                 <table class="table table-striped table-sm">
                 <?php 
-                    $consulta = "SELECT * FROM cadastro_animal ORDER BY c_data DESC";
-                    $sql = $mysqli->query($consulta) or die($mysqli->error);
-                    $conta = mysqli_num_rows($sql);
+                    try {
+                      $consulta = "SELECT * FROM cadastro_animal ORDER BY c_data DESC";
+                      $stmt = $pdo->prepare($consulta);
+                      $stmt->execute();
+                    } catch (PDOException $e) {
+                      echo "Erro: " . $e->getMessage();
+                      die();
+                    }
+                    $conta = $stmt->rowCount();
 
                     if($conta > 0)
                     {
@@ -78,7 +84,7 @@
                 </thead>
                 <tbody>                
                     <?php                 
-                    while($dado = $sql->fetch_array())    
+                    while($dado = $stmt->fetch(PDO::FETCH_ASSOC))    
                     {              
                     ?>
                     <tr>
@@ -98,9 +104,15 @@
                     </td>  
                     <td>                
                     <?php 
-                       $racas = "SELECT  * from cadastro_raca r";
-                       $tabela = $mysqli->query($racas) or die($mysqli->error);
-                       while($row = $tabela->fetch_array())
+                       try {
+                        $racas = "SELECT  * from cadastro_raca r";
+                        $stmt = $pdo->prepare($racas);
+                        $stmt->execute();
+                       } catch (PDOException $e) {
+                        echo "Erro: " . $e->getMessage();
+                        die();
+                       }
+                       while($row = $stmt->fetch(PDO::FETCH_ASSOC))
                        {          
                         if ($dado["c_raca"] == $row['r_id'])         
                           {                     
@@ -110,9 +122,15 @@
                     <td><?php echo $dado["c_descricao"]; ?></td>
                     <td>
                     <?php 
-                       $tamanho = "SELECT  * from cadastro_tamanho t";
-                       $tabela = $mysqli->query($tamanho) or die($mysqli->error);
-                       while($tam = $tabela->fetch_array())
+                       try {
+                        $tamanho = "SELECT  * from cadastro_tamanho t";
+                        $stmt = $pdo->prepare($tamanho);
+                        $stmt->execute();
+                       } catch (PDOException $e) {
+                        echo "Erro: " . $e->getMessage();
+                        die();
+                       }
+                       while($tam = $stmt->fetch(PDO::FETCH_ASSOC))
                        {          
                         if ($dado["c_tamanho"] == $tam['t_id'])         
                           {                     
@@ -121,9 +139,15 @@
                     </td>    
                     <td>
                     <?php 
-                       $cor = "SELECT  * from cadastro_cor c";
-                       $tabela = $mysqli->query($cor) or die($mysqli->error);
-                       while($cores = $tabela->fetch_array())
+                       try {
+                        $cor = "SELECT  * from cadastro_cor c";
+                        $stmt = $pdo->prepare($cor);
+                        $stmt->execute();
+                       } catch (PDOException $e) {
+                        echo "Erro: " . $e->getMessage();
+                        die();
+                       }
+                       while($cores = $stmt->fetch(PDO::FETCH_ASSOC))
                        {          
                         if ($dado["id_cor"] == $cores['c_id'])         
                           {                     

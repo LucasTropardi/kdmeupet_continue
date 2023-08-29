@@ -11,9 +11,14 @@
 
 $g_id = intval($_GET['g_id']); 
 
-$consulta = "SELECT * FROM cadastro_gerenciador where g_id = '$g_id'";
-$sql = $mysqli->query($consulta) or die($mysqli->error);
-$dado = $sql->fetch_array();  
+try {
+  $consulta = "SELECT * FROM cadastro_gerenciador where g_id = '$g_id'";
+  $stmt_consulta = $pdo->prepare($consulta);
+  $stmt_consulta->execute();
+} catch (PDOException $e) {
+  echo "Erro: " . $e->getMessage();
+}
+$dado = $stmt_consulta->fetch(PDO::FETCH_ASSOC);  
 
 ?>
 <html lang="pt">

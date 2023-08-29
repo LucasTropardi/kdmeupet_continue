@@ -62,14 +62,20 @@
                 
                 <div class="table-responsive">
                 <table class="table table-striped table-sm">
-                <?php 
+                <?php
+                  try {
                     $consulta = "SELECT * FROM contacts_msg ORDER BY created DESC";
-                    $sql = $mysqli->query($consulta) or die($mysqli->error);
-                    $conta = mysqli_num_rows($sql);
+                    $stmt = $pdo->prepare($consulta);
+                    $stmt->execute();
+                  } catch (PDOException $e) {
+                    echo "Erro: " . $e->getMessage();
+                    die();
+                  }
+                  $conta = $stmt->rowCount();
 
-                    if($conta > 0)
-                    {
+                  if ($conta > 0) {
                 ?>
+
                 <thead>
                     <tr>
                     <th>ID</th>
@@ -84,7 +90,7 @@
                 </thead>
                 <tbody>                
                     <?php                 
-                    while($dado = $sql->fetch_array())    
+                    while($dado = $stmt->fetch(PDO::FETCH_ASSOC))    
                     {              
                     ?>
                     <tr>

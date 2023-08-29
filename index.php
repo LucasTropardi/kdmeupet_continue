@@ -61,38 +61,39 @@
                     <h3 class="section-subheading text-muted">Últimos animais achados postados em nosso site.</h3>
                 </div>
                 <?php
-                    $query = "SELECT count(a.c_id) total FROM `cadastro_animal` a WHERE a.c_situacao = 1 AND a.c_finalizado = 0";
-                    $sql_achados_tot = $mysqli->query($query) or die($mysqli->error);
-                    $achados_tot =  $sql_achados_tot->fetch_array()['total'];              
-                    $query_achados = "SELECT a.*,
-                                             t.t_nometm,
-                                             r.r_nome,
-                                             c.c_cor,
-                                             u.u_nomecompleto,
-                                             tp.t_nome
-                                        FROM `cadastro_animal` a,
-                                             `cadastro_tamanho` t,
-                                             `cadastro_raca` r,
-                                             `cadastro_cor` c,
-                                             `cadastro_usuario` u,
-                                             `cadastro_tipo` tp
-                                       WHERE a.c_tamanho = t.t_id
-                                         AND a.c_raca = r.r_id
-                                         AND a.id_cor = c.c_id
-                                         AND a.c_usuario = u.u_id
-                                         AND r.r_tipos = tp.t_id
-                                         AND a.c_situacao = 1
-                                         AND a.c_finalizado = 0
-                                    ORDER BY a.c_data DESC";
-                    if ($achados_tot > 5){
-                        $query_achados .= " LIMIT 5";
-                    }
-                $sql_achados = $mysqli->query($query_achados) or die($mysqli->error);
+                    try {
+                        $query = "SELECT count(a.c_id) as total FROM `cadastro_animal` a WHERE a.c_situacao = 1 AND a.c_finalizado = 0";
+                        $stmt_query = $pdo->prepare($query);
+                        $stmt_query->execute();
+                        $achados_tot =  $stmt_query->fetch(PDO::FETCH_ASSOC)['total'];              
+                        $query_achados = "SELECT a.*,
+                                                t.t_nometm,
+                                                r.r_nome,
+                                                c.c_cor,
+                                                u.u_nomecompleto,
+                                                tp.t_nome
+                                                FROM `cadastro_animal` a
+                                                JOIN `cadastro_tamanho` t ON a.c_tamanho = t.t_id
+                                                JOIN `cadastro_raca` r ON a.c_raca = r.r_id
+                                                JOIN `cadastro_cor` c ON a.id_cor = c.c_id
+                                                JOIN `cadastro_usuario` u ON a.c_usuario = u.u_id
+                                                JOIN `cadastro_tipo` tp ON r.r_tipos = tp.t_id
+                                                WHERE a.c_situacao = 1 AND a.c_finalizado = 0
+                                                ORDER BY a.c_data DESC";
+                        if ($achados_tot > 5){
+                            $query_achados .= " LIMIT 5";
+                        }
+                        $stmt_achados = $pdo->prepare($query_achados);
+                        $stmt_achados->execute();
+                    } catch (PDOException $e) {
+                        echo "Erro: " . $e->getMessage();
+                        die();
+                    }   
                 ?>
                 <div class="row">
                     <?php
                         $achados_row = 1;
-                        while ($achados = $sql_achados->fetch_array()){              
+                        while ($achados = $stmt_achados->fetch(PDO::FETCH_ASSOC)) {              
                     ?>
                     <div class="col-lg-4 col-sm-6 mb-4">
                         
@@ -149,38 +150,39 @@
                     <h3 class="section-subheading text-muted">Últimos animais perdidos postados em nosso site.</h3>
                 </div>
                 <?php
-                    $query = "SELECT count(a.c_id) total FROM `cadastro_animal` a WHERE a.c_situacao = 2 AND a.c_finalizado = 0";
-                    $sql_perdidos_tot = $mysqli->query($query) or die($mysqli->error);
-                    $perdidos_tot =  $sql_perdidos_tot->fetch_array()['total'];              
-                    $query_perdidos = "SELECT a.*,
-                                             t.t_nometm,
-                                             r.r_nome,
-                                             c.c_cor,
-                                             u.u_nomecompleto,
-                                             tp.t_nome
-                                        FROM `cadastro_animal` a,
-                                             `cadastro_tamanho` t,
-                                             `cadastro_raca` r,
-                                             `cadastro_cor` c,
-                                             `cadastro_usuario` u,
-                                             `cadastro_tipo` tp
-                                       WHERE a.c_tamanho = t.t_id
-                                         AND a.c_raca = r.r_id
-                                         AND a.id_cor = c.c_id
-                                         AND a.c_usuario = u.u_id
-                                         AND r.r_tipos = tp.t_id
-                                         AND a.c_situacao = 2
-                                         AND a.c_finalizado = 0
-                                    ORDER BY a.c_data DESC";
-                    if ($perdidos_tot > 5){
-                        $query_perdidos .= " LIMIT 5";
+                    try {
+                        $query = "SELECT count(a.c_id) as total FROM `cadastro_animal` a WHERE a.c_situacao = 2 AND a.c_finalizado = 0";
+                        $stmt_query = $pdo->prepare($query);
+                        $stmt_query->execute();
+                        $perdidos_tot =  $stmt_query->fetch(PDO::FETCH_ASSOC)['total'];              
+                        $query_perdidos = "SELECT a.*,
+                                                t.t_nometm,
+                                                r.r_nome,
+                                                c.c_cor,
+                                                u.u_nomecompleto,
+                                                tp.t_nome
+                                                FROM `cadastro_animal` a
+                                                JOIN `cadastro_tamanho` t ON a.c_tamanho = t.t_id
+                                                JOIN `cadastro_raca` r ON a.c_raca = r.r_id
+                                                JOIN `cadastro_cor` c ON a.id_cor = c.c_id
+                                                JOIN `cadastro_usuario` u ON a.c_usuario = u.u_id
+                                                JOIN `cadastro_tipo` tp ON r.r_tipos = tp.t_id
+                                                WHERE a.c_situacao = 2 AND a.c_finalizado = 0
+                                                ORDER BY a.c_data DESC";
+                        if ($perdidos_tot > 5){
+                            $query_perdidos .= " LIMIT 5";
+                        }
+                    $stmt_perdidos = $pdo->prepare($query_perdidos);
+                    $stmt_perdidos->execute();
+                    } catch (PDOException $e) {
+                        echo "Erro: " . $e->getMessage();
+                        die();
                     }
-                $sql_perdidos = $mysqli->query($query_perdidos) or die($mysqli->error);
                 ?>
                 <div class="row">
                     <?php
                         $perdidos_row = 1;
-                        while ($perdidos = $sql_perdidos->fetch_array()){              
+                        while ($perdidos = $stmt_perdidos->fetch(PDO::FETCH_ASSOC)) {              
                     ?>
                     <div class="col-lg-4 col-sm-6 mb-4">
                         
@@ -232,24 +234,30 @@
         <!-- Parcerias -->
         <?php
         // busca parcerias
-            $query = "SELECT * FROM `contacts_msg` WHERE `aprovado` = 1 ORDER BY RAND() LIMIT 5";
-            $select = $mysqli -> query($query);
+            try {
+                $query = "SELECT * FROM `contacts_msg` WHERE `aprovado` = 1 ORDER BY RAND() LIMIT 5";
+                $stmt = $pdo->prepare($query);
+                $stmt->execute();
+            } catch (PDOException $e) {
+                echo "Erro: " . $e->getMessage();
+                die();
+            }   
         ?>
         <section class="page-section" id="about">
             <div class="container">
                 <div class="text-center">
                     <h2 class="section-heading text-uppercase">Parcerias</h2>
                     <?php
-                        if (mysqli_num_rows($select) > 0) {
+                        if ($stmt->rowCount() > 0) {
                     ?>
                         <h3 class="section-subheading text-muted">Aqui estão listados alguns de nossos parceiros.</h3>
                     <?php } ?>
                 </div>
                 <?php
-                    if (mysqli_num_rows($select) > 0) {
+                    if ($stmt->rowCount() > 0) {
                         echo '<ul class="timeline">';
                         $num_linha = 1;
-                        while ($parceria = $select->fetch_array()) {
+                        while ($parceria = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 ?>
                         <li <?php if ($num_linha % 2 == 0) echo 'class="timeline-inverted"'?> >
                             <div class="timeline-image ratio ratio-1x1">
@@ -294,148 +302,161 @@
 
         <!-- ACHADOS Modals-->
         <?php
-            $sql_achados = $mysqli->query($query_achados) or die($mysqli->error);
+            try {
+                $stmt_achados = $pdo->prepare($query_achados);
+                $stmt_achados->execute();
+            } catch (PDOException $e) {
+                echo "Erro: " . $e->getMessage();
+                die();
+            }
 
             $achados_row = 1;
-            while ($achados = $sql_achados->fetch_array()){
-        ?>
-        <div class="portfolio-modal modal fade" id="achadosModal<?php echo $achados_row; ?>" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="modal-body">
-                                    <!-- Project details-->
-                                    <h2 class="text-uppercase"><?php echo $achados['c_nomeanimal']; ?></h2>
-                                    <p class="item-intro text-muted"><strong>Enviado por:</strong> <?php echo $achados['u_nomecompleto']; ?>
-                                    <br><strong>Em:</strong> <?php echo date("d/m/Y H:i:s", strtotime($achados['c_data'])); ?></p>
-                                    <img class="img-fluid d-block mx-auto"
-                                        <?php
-                                            if ($achados['c_foto'] != ""){
-                                                echo 'src="upload/'. $achados['c_foto'] .'"'; 
-                                            } else {
-                                                echo 'src="assets/img/sem_imagem.png"';
-                                            }
-                                        ?>
-                                        alt="..." />
-                                    <p><?php echo $achados['c_descricao']; ?></p>
-                                    <ul class="list-inline">
-                                        <li>
-                                            <strong>Tamanho:</strong>
-                                            <?php echo $achados['t_nometm']; ?>
-                                        </li>
-                                        <li>
-                                            <strong>Raça:</strong>
-                                            <?php echo $achados['r_nome']; ?>
-                                        </li>
-                                        <li>
-                                            <strong>Cor:</strong>
-                                            <?php echo $achados['c_cor']; ?>
-                                        </li>
-                                        <li>
+            while ($achados = $stmt_achados->fetch(PDO::FETCH_ASSOC)) {
+            ?>
+            <div class="portfolio-modal modal fade" id="achadosModal<?php echo $achados_row; ?>" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-8">
+                                    <div class="modal-body">
+                                        <!-- Project details-->
+                                        <h2 class="text-uppercase"><?php echo $achados['c_nomeanimal']; ?></h2>
+                                        <p class="item-intro text-muted"><strong>Enviado por:</strong> <?php echo $achados['u_nomecompleto']; ?>
+                                        <br><strong>Em:</strong> <?php echo date("d/m/Y H:i:s", strtotime($achados['c_data'])); ?></p>
+                                        <img class="img-fluid d-block mx-auto"
                                             <?php
-                                                if ($achados['c_endereco'] != ""){ ?>
-                                            <strong>Localização:</strong>
-                                            <?php echo $achados['c_endereco'];
-                                            } ?>
-                                        </li>
-                                        <li>
-                                            <?php
-                                                if ($achados['c_contato'] != ""){ ?>
-                                            <strong>Contato:</strong>
-                                            <?php echo $achados['c_contato'];
-                                            } ?>
-                                        </li>
-                                    </ul>
-                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
-                                        <i class="fas fa-xmark me-1"></i>
-                                        Fechar
-                                    </button>
+                                                if ($achados['c_foto'] != ""){
+                                                    echo 'src="upload/'. $achados['c_foto'] .'"'; 
+                                                } else {
+                                                    echo 'src="assets/img/sem_imagem.png"';
+                                                }
+                                            ?>
+                                            alt="..." />
+                                        <p><?php echo $achados['c_descricao']; ?></p>
+                                        <ul class="list-inline">
+                                            <li>
+                                                <strong>Tamanho:</strong>
+                                                <?php echo $achados['t_nometm']; ?>
+                                            </li>
+                                            <li>
+                                                <strong>Raça:</strong>
+                                                <?php echo $achados['r_nome']; ?>
+                                            </li>
+                                            <li>
+                                                <strong>Cor:</strong>
+                                                <?php echo $achados['c_cor']; ?>
+                                            </li>
+                                            <li>
+                                                <?php
+                                                    if ($achados['c_endereco'] != ""){ ?>
+                                                <strong>Localização:</strong>
+                                                <?php echo $achados['c_endereco'];
+                                                    } ?>
+                                            </li>
+                                            <li>
+                                                <?php
+                                                    if ($achados['c_contato'] != ""){ ?>
+                                                <strong>Contato:</strong>
+                                                <?php echo $achados['c_contato'];
+                                                    } ?>
+                                            </li>
+                                        </ul>
+                                        <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
+                                            <i class="fas fa-xmark me-1"></i>
+                                            Fechar
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <?php
-            $achados_row ++;
+            <?php
+                $achados_row++;
             }
         ?>
         <!-- FIM ACHADOS Modals-->
 
         <!-- PERDIDOS Modals-->
         <?php
-            $sql_perdidos = $mysqli->query($query_perdidos) or die($mysqli->error);
+            try {
+                $stmt_perdidos = $pdo->prepare($query_perdidos);
+                $stmt_perdidos->execute();
+            } catch (PDOException $e) {
+                echo "Erro: " . $e->getMessage();
+                die();
+            }
 
             $perdidos_row = 1;
-            while ($perdidos = $sql_perdidos->fetch_array()){
-        ?>
-        <div class="portfolio-modal modal fade" id="perdidosModal<?php echo $perdidos_row; ?>" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="modal-body">
-                                    <!-- Project details-->
-                                    <h2 class="text-uppercase"><?php echo $perdidos['c_nomeanimal']; ?></h2>
-                                    <p class="item-intro text-muted"><strong>Enviado por:</strong> <?php echo $perdidos['u_nomecompleto']; ?>
-                                    <br><strong>Em:</strong> <?php echo date("d/m/Y H:i:s", strtotime($perdidos['c_data'])); ?></p>
-                                    <img class="img-fluid d-block mx-auto"
-                                        <?php
-                                            if ($perdidos['c_foto'] != ""){
-                                                echo 'src="upload/'. $perdidos['c_foto'] .'"'; 
-                                            } else {
-                                                echo 'src="assets/img/sem_imagem.png"';
-                                            }
-                                        ?>
-                                        alt="..." />
-                                    <p><?php echo $perdidos['c_descricao']; ?></p>
-                                    <ul class="list-inline">
-                                        <li>
-                                            <strong>Tamanho:</strong>
-                                            <?php echo $perdidos['t_nometm']; ?>
-                                        </li>
-                                        <li>
-                                            <strong>Raça:</strong>
-                                            <?php echo $perdidos['r_nome']; ?>
-                                        </li>
-                                        <li>
-                                            <strong>Cor:</strong>
-                                            <?php echo $perdidos['c_cor']; ?>
-                                        </li>
-                                        <li>
-                                            <?php
-                                                if ($perdidos['c_endereco'] != ""){ ?>
-                                            <strong>Localização:</strong>
-                                            <?php echo $perdidos['c_endereco'];
-                                            } ?>
-                                        </li>
-                                        <li>
-                                            <?php
-                                                if ($perdidos['c_contato'] != ""){ ?>
-                                            <strong>Contato:</strong>
-                                            <?php echo $perdidos['c_contato'];
-                                            } ?>
-                                        </li>
-                                    </ul>
-                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
-                                        <i class="fas fa-xmark me-1"></i>
-                                        Fechar
-                                    </button>
+            while ($perdidos = $stmt_perdidos->fetch(PDO::FETCH_ASSOC)) {
+                ?>
+                <div class="portfolio-modal modal fade" id="perdidosModal<?php echo $perdidos_row; ?>" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
+                            <div class="container">
+                                <div class="row justify-content-center">
+                                    <div class="col-lg-8">
+                                        <div class="modal-body">
+                                            <!-- Project details-->
+                                            <h2 class="text-uppercase"><?php echo $perdidos['c_nomeanimal']; ?></h2>
+                                            <p class="item-intro text-muted"><strong>Enviado por:</strong> <?php echo $perdidos['u_nomecompleto']; ?>
+                                                <br><strong>Em:</strong> <?php echo date("d/m/Y H:i:s", strtotime($perdidos['c_data'])); ?></p>
+                                            <img class="img-fluid d-block mx-auto"
+                                                <?php
+                                                if ($perdidos['c_foto'] != "") {
+                                                    echo 'src="upload/' . $perdidos['c_foto'] . '"';
+                                                } else {
+                                                    echo 'src="assets/img/sem_imagem.png"';
+                                                }
+                                                ?>
+                                                alt="..." />
+                                            <p><?php echo $perdidos['c_descricao']; ?></p>
+                                            <ul class="list-inline">
+                                                <li>
+                                                    <strong>Tamanho:</strong>
+                                                    <?php echo $perdidos['t_nometm']; ?>
+                                                </li>
+                                                <li>
+                                                    <strong>Raça:</strong>
+                                                    <?php echo $perdidos['r_nome']; ?>
+                                                </li>
+                                                <li>
+                                                    <strong>Cor:</strong>
+                                                    <?php echo $perdidos['c_cor']; ?>
+                                                </li>
+                                                <li>
+                                                    <?php
+                                                    if ($perdidos['c_endereco'] != "") { ?>
+                                                        <strong>Localização:</strong>
+                                                        <?php echo $perdidos['c_endereco'];
+                                                    } ?>
+                                                </li>
+                                                <li>
+                                                    <?php
+                                                    if ($perdidos['c_contato'] != "") { ?>
+                                                        <strong>Contato:</strong>
+                                                        <?php echo $perdidos['c_contato'];
+                                                    } ?>
+                                                </li>
+                                            </ul>
+                                            <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal"
+                                                    type="button">
+                                                <i class="fas fa-xmark me-1"></i>
+                                                Fechar
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <?php
-            $perdidos_row ++;
+                <?php
+                $perdidos_row++;
             }
         ?>
         <!-- FIM PERDIDOS Modals-->

@@ -42,16 +42,30 @@
   }
   
   $query = "INSERT INTO `cadastro_adocao` (`p_nome`, `p_foto`, `p_descricao`, `p_contato`, `p_idade`, `p_tipo`, 
-  `p_raca`, `p_tamanho`, `p_cor`, `p_status`) VALUES ('$nome' , '$foto' , '$descricao' , '$contato', '$idade', '$tipo', '$raca', 
-  '$tamanho', '$cor', '$status')";
-  $insert = $mysqli -> query($query);
+  `p_raca`, `p_tamanho`, `p_cor`, `p_status`) VALUES (:nome, :foto, :descricao, :contato, :idade, :tipo, :raca, 
+  :tamanho, :cor, :status)";
+  
+  $stmt = $pdo->prepare($query);
 
-  if ($insert){
-      $_SESSION['cadastro_adocao'] = 1; //arquivo e registro banco executado com sucesso
+  $stmt->bindParam(':nome', $nome, PDO::PARAM_STR);
+  $stmt->bindParam(':foto', $foto, PDO::PARAM_STR);
+  $stmt->bindParam(':descricao', $descricao, PDO::PARAM_STR);
+  $stmt->bindParam(':contato', $contato, PDO::PARAM_STR);
+  $stmt->bindParam(':idade', $idade, PDO::PARAM_INT);
+  $stmt->bindParam(':tipo', $tipo, PDO::PARAM_STR);
+  $stmt->bindParam(':raca', $raca, PDO::PARAM_STR);
+  $stmt->bindParam(':tamanho', $tamanho, PDO::PARAM_STR);
+  $stmt->bindParam(':cor', $cor, PDO::PARAM_STR);
+  $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+
+  $insert = $stmt->execute();
+
+  if ($insert) {
+      $_SESSION['cadastro_adocao'] = 1; // arquivo e registro banco executado com sucesso
   } else {
       $_SESSION['cadastro_adocao'] = -1; // erro ao inserir registro
-      $_SESSION['msg'] = 'Query: <code>' . $query . '</code><br>Erro: <code>' . $mysqli->error . '</code>';
+      $_SESSION['msg'] = 'Query: <code>' . $query . '</code><br>Erro: <code>' . implode(" ", $stmt->errorInfo()) . '</code>';
       unlink($diretorio.$novo_nome);
   }
 
-header('Location: adminadocoes.php');
+  header('Location: adminadocoes.php');

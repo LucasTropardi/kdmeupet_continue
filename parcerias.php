@@ -54,27 +54,33 @@
             unset($_SESSION['msgContent']);
         ?>
 
-                <!-- Parcerias -->
-                <?php
+        <!-- Parcerias -->
+        <?php
         // busca parcerias
-            $query = "SELECT * FROM `contacts_msg` WHERE `aprovado` = 1 ORDER BY RAND()";
-            $select = $mysqli -> query($query);
+            try {
+                $query = "SELECT * FROM `contacts_msg` WHERE `aprovado` = 1 ORDER BY RAND()";
+                $stmt = $pdo->prepare($query);
+                $stmt->execute();
+            } catch (PDOException $e) {
+                echo "Erro: " . $e->getMessage();
+                die();
+            }
         ?>
         <section class="page-section" id="about">
             <div class="container">
                 <div class="text-center">
                     <h2 class="section-heading text-uppercase">Parcerias</h2>
                     <?php
-                        if (mysqli_num_rows($select) > 0) {
+                        if ($stmt->rowCount() > 0) {
                     ?>
                         <h3 class="section-subheading text-muted">Aqui estão listados alguns de nossos parceiros.</h3>
                     <?php } ?>
                 </div>
                 <?php
-                    if (mysqli_num_rows($select) > 0) {
+                    if ($stmt->rowCount() > 0) {
                         echo '<ul class="timeline">';
                         $num_linha = 1;
-                        while ($parceria = $select->fetch_array()) {
+                        while ($parceria = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 ?>
                         <li <?php if ($num_linha % 2 == 0) echo 'class="timeline-inverted"'?> >
                             <div class="timeline-image ratio ratio-1x1">

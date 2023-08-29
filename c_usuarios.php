@@ -56,9 +56,14 @@
                 <table class="table table-striped table-sm">             
 
                 <?php 
-                    $consulta = "SELECT * FROM cadastro_usuario ORDER BY u_nomecompleto ASC";
-                    $sql = $mysqli->query($consulta) or die($mysqli->error);
-                    $conta = mysqli_num_rows($sql);
+                    try {
+                      $consulta = "SELECT * FROM cadastro_usuario ORDER BY u_nomecompleto ASC";
+                      $stmt = $pdo->query($consulta);
+                    } catch (PDOException $e) {
+                      echo "Erro: " . $e->getMessage();
+                      die();
+                    }
+                    $conta = $stmt->rowCount();
 
                     if($conta > 0)
                     {
@@ -75,7 +80,7 @@
                 </thead>
                 <tbody>                
                     <?php                 
-                    while($dado = $sql->fetch_array())    
+                    while($dado = $stmt->fetch(PDO::FETCH_ASSOC))    
                     {              
                     ?>
                     <tr>

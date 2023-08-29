@@ -66,17 +66,25 @@ $p_id = $_GET['p_id'];
 
           <!-- Card Animal-->
           <?php 
-                    $interesse = "SELECT distinct c.*, u.*, t.*, tt.*, r.*, cc.* FROM cadastro_adocao_interesse c                    
-                    inner join cadastro_adocao u on u.p_id = c.i_adocao   
-                    inner join cadastro_tipo t on t.t_id = u.p_tipo  
-                    inner join cadastro_tamanho tt on tt.t_id = u.p_tamanho   
-                    inner join cadastro_raca r on r.r_id = u.p_raca  
-                    inner join cadastro_cor cc on cc.c_id = u.p_cor        
-                    where c.i_adocao = $p_id ";         
-                    
-                    $sql2 = $mysqli -> query($interesse);
+            try {
+              $interesseQuery = "SELECT DISTINCT c.*, u.*, t.*, tt.*, r.*, cc.* FROM cadastro_adocao_interesse c                    
+                                INNER JOIN cadastro_adocao u ON u.p_id = c.i_adocao   
+                                INNER JOIN cadastro_tipo t ON t.t_id = u.p_tipo  
+                                INNER JOIN cadastro_tamanho tt ON tt.t_id = u.p_tamanho   
+                                INNER JOIN cadastro_raca r ON r.r_id = u.p_raca  
+                                INNER JOIN cadastro_cor cc ON cc.c_id = u.p_cor        
+                                WHERE c.i_adocao = :p_id"; 
 
-                    $animal = $sql2->fetch_array();                   
+              $stmt = $pdo->prepare($interesseQuery);
+              $stmt->bindParam(':p_id', $p_id, PDO::PARAM_INT);
+              $stmt->execute();
+            } catch (PDOException $e) {
+              echo "Erro: " . $e->getMessage();
+              die();
+            }
+
+            $animal = $stmt->fetch(PDO::FETCH_ASSOC);
+                  
 
           ?>
           <div class="card mb-3">
@@ -111,15 +119,23 @@ $p_id = $_GET['p_id'];
                 <div class="table-responsive">
                 <table class="table table-striped table-sm">
                 <?php 
-                    $consulta = "SELECT c.*, u.* FROM cadastro_adocao_interesse c                    
-                    inner join cadastro_usuario u on u.u_id = c.i_usuario                     
-                    where c.i_adocao = $p_id order by c.i_id desc";                
-                    
-                    $sql = $mysqli->query($consulta) or die($mysqli->error);
-                    $conta = mysqli_num_rows($sql);
+                    try{
+                      $consulta = "SELECT c.*, u.* FROM cadastro_adocao_interesse c                    
+                                  INNER JOIN cadastro_usuario u ON u.u_id = c.i_usuario                     
+                                  WHERE c.i_adocao = :p_id ORDER BY c.i_id DESC"; 
 
-                    if($conta > 0)
-                    {
+                      $stmt = $pdo->prepare($consulta);
+                      $stmt->bindParam(':p_id', $p_id, PDO::PARAM_INT);
+                      $stmt->execute();
+                    } catch (PDOException $e) {
+                      echo "Erro: " . $e->getMessage();
+                      die();
+                    }
+
+                    $conta = $stmt->rowCount();
+        
+                    if ($conta > 0)
+                                {
                 ?>
                 <thead>
                     <tr>
@@ -133,7 +149,7 @@ $p_id = $_GET['p_id'];
                 </thead>
                 <tbody>                
                     <?php                 
-                    while($dado = $sql->fetch_array())    
+                    while($dado = $stmt->fetch(PDO::FETCH_ASSOC))    
                     {              
                     ?>
                     <tr>

@@ -1,5 +1,7 @@
 <?php
 
+use Google\Service\Datastream\FetchErrorsRequest;
+
     if (!isset($_SESSION)) session_start();
 
     include_once"conexao.php";
@@ -66,9 +68,15 @@
                         <select class="form-select" id="tipo" name="tipo" required  >
                             <option disabled selected value="">Selecione uma Opção</option>
                             <?php 
-                                $query = "SELECT * FROM cadastro_tipo ORDER BY t_nome ASC";
-                                $sql = $mysqli->query($query) or die($mysqli->error);
-                                while ($tp = $sql->fetch_array()){              
+                                try {
+                                    $query = "SELECT * FROM cadastro_tipo ORDER BY t_nome ASC";
+                                    $stmt = $pdo->prepare($query);
+                                    $stmt->execute();
+                                } catch (PDOException $e) {
+                                    echo "Erro: " . $e->getMessage();
+                                    die();
+                                }
+                                while ($tp = $stmt->fetch(PDO::FETCH_ASSOC)) {              
                             ?> 
                             <option value="<?php echo $tp["t_id"]; ?>">
                                 <?php echo $tp["t_nome"]; ?>
@@ -93,9 +101,15 @@
                         <select class="form-select" id="tamanho" name="tamanho" required>
                             <option disabled selected value="">Selecione uma Opção</option>
                             <?php 
-                                $query = "SELECT * FROM cadastro_tamanho ORDER BY t_nometm ASC";
-                                $sql = $mysqli->query($query) or die($mysqli->error);
-                                while ($tm = $sql->fetch_array()){              
+                                try {
+                                    $query = "SELECT * FROM cadastro_tamanho ORDER BY t_nometm ASC";
+                                    $stmt = $pdo->prepare($query);
+                                    $stmt->execute();
+                                } catch (PDOException $e) {
+                                    echo "Erro: " . $e->getMessage();
+                                    die();
+                                }    
+                                while ($tm = $stmt->fetch(PDO::FETCH_ASSOC)) {              
                             ?> 
                             <option value="<?php echo $tm["t_id"]; ?>">
                                 <?php echo $tm["t_nometm"]; ?>
@@ -110,9 +124,15 @@
                         <select class="form-select" id="cor" name="cor" required>
                             <option disabled selected value="">Selecione uma Opção</option>
                             <?php 
-                                $query = "SELECT * FROM cadastro_cor ORDER BY c_cor ASC";
-                                $sql = $mysqli->query($query) or die($mysqli->error);
-                                while ($cr = $sql->fetch_array()){              
+                                try {
+                                    $query = "SELECT * FROM cadastro_cor ORDER BY c_cor ASC";
+                                    $stmt = $pdo->prepare($query);
+                                    $stmt->execute();
+                                } catch (PDOException $e) {
+                                    echo "Erro: " . $e->getMessage();
+                                    die();
+                                }
+                                while ($cr = $stmt->fetch(PDO::FETCH_ASSOC)) {              
                             ?> 
                             <option value="<?php echo $cr["c_id"]; ?>">
                                 <?php echo $cr["c_cor"]; ?>
@@ -132,35 +152,36 @@
                     <!-- FIM Filtros de buscas -->    
 
                 <?php
-                    $query = "SELECT count(a.c_id) total FROM `cadastro_animal` a WHERE a.c_situacao = 2 AND a.c_finalizado = 0";
-                    $sql_perdidos_tot = $mysqli->query($query) or die($mysqli->error);
-                    $perdidos_tot =  $sql_perdidos_tot->fetch_array()['total'];              
-                    $query_perdidos = "SELECT a.*,
-                                             t.t_nometm,
-                                             r.r_nome,
-                                             c.c_cor,
-                                             u.u_nomecompleto,
-                                             tp.t_nome
-                                        FROM `cadastro_animal` a,
-                                             `cadastro_tamanho` t,
-                                             `cadastro_raca` r,
-                                             `cadastro_cor` c,
-                                             `cadastro_usuario` u,
-                                             `cadastro_tipo` tp
-                                       WHERE a.c_tamanho = t.t_id
-                                         AND a.c_raca = r.r_id
-                                         AND a.id_cor = c.c_id
-                                         AND a.c_usuario = u.u_id
-                                         AND r.r_tipos = tp.t_id
-                                         AND a.c_situacao = 2
-                                         AND a.c_finalizado = 0
-                                    ORDER BY a.c_data DESC";
-                $sql_perdidos = $mysqli->query($query_perdidos) or die($mysqli->error);
+                    try {
+                        $query = "SELECT count(a.c_id) as total FROM `cadastro_animal` a WHERE a.c_situacao = 2 AND a.c_finalizado = 0";
+                        $stmt = $pdo->prepare($query);
+                        $stmt->execute();
+                        $perdidos_tot =  $stmt->fetch(PDO::FETCH_ASSOC)['total'];              
+                        $query_perdidos = "SELECT a.*,
+                                                t.t_nometm,
+                                                r.r_nome,
+                                                c.c_cor,
+                                                u.u_nomecompleto,
+                                                tp.t_nome
+                                                FROM `cadastro_animal` a
+                                                JOIN `cadastro_tamanho` t ON a.c_tamanho = t.t_id
+                                                JOIN `cadastro_raca` r ON a.c_raca = r.r_id
+                                                JOIN `cadastro_cor` c ON a.id_cor = c.c_id
+                                                JOIN `cadastro_usuario` u ON a.c_usuario = u.u_id
+                                                JOIN `cadastro_tipo` tp ON r.r_tipos = tp.t_id
+                                                WHERE a.c_situacao = 2 AND a.c_finalizado = 0
+                                                ORDER BY a.c_data DESC";
+                        $stmt_perdidos = $pdo->prepare($query_perdidos);
+                        $stmt_perdidos->execute();
+                    } catch (PDOException $e) {
+                        echo "Erro: " . $e->getMessage();
+                        die();
+                    }
                 ?>
                 <div class="row">
                     <?php
                         $perdidos_row = 1;
-                        while ($perdidos = $sql_perdidos->fetch_array()){              
+                        while ($perdidos = $stmt_perdidos->fetch(PDO::FETCH_ASSOC)) {              
                     ?>
                     <div class="col-lg-4 col-sm-6 mb-4">
                         
@@ -208,10 +229,16 @@
 
         <!-- PERDIDOS Modals-->
         <?php
-            $sql_perdidos = $mysqli->query($query_perdidos) or die($mysqli->error);
+            try {
+                $stmt_perdidos = $pdo->prepare($query_perdidos);
+                $stmt_perdidos->execute();
+            } catch (PDOException $e) {
+                echo "Erro: " . $e->getMessage();
+                die();
+            }
 
             $perdidos_row = 1;
-            while ($perdidos = $sql_perdidos->fetch_array()){
+            while ($perdidos = $stmt_perdidos->fetch(PDO::FETCH_ASSOC)) {
         ?>
         <div class="portfolio-modal modal fade" id="perdidosModal<?php echo $perdidos_row; ?>" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog">

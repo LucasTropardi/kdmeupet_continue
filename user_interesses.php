@@ -72,7 +72,27 @@
 
                     <div class="container-fluid">   
                     <?php
-                        $lista_animais = Adocao::buscaPorUsuario($mysqli, $_SESSION['usuarioId']);
+                        try {
+                            $usuarioId = $_SESSION['usuarioId'];
+                            $query = "SELECT a.*, i.i_mensagem, i.i_lida, t.t_nome AS tipo, r.r_nome AS raca, tm.t_nometm AS tamanho, c.c_cor AS cor
+                                      FROM `cadastro_adocao_interesse` i
+                                      INNER JOIN `cadastro_adocao` a ON i.i_adocao = a.p_id
+                                      INNER JOIN `cadastro_tipo` t ON a.p_tipo = t.t_id
+                                      INNER JOIN `cadastro_raca` r ON a.p_raca = r.r_id AND t.t_id = r.r_tipos
+                                      INNER JOIN `cadastro_tamanho` tm ON a.p_tamanho = tm.t_id
+                                      INNER JOIN `cadastro_cor` c ON a.p_cor = c.c_id
+                                      WHERE i.i_usuario = :usuarioId
+                                      ORDER BY a.p_status, a.p_id DESC";
+                        
+                            $stmt = $pdo->prepare($query);
+                            $stmt->bindParam(':usuarioId', $usuarioId);
+                            $stmt->execute();
+                        
+                            $lista_animais = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        } catch (PDOException $e) {
+                            echo "Erro: " . $e->getMessage();
+                        }
+                        
                         foreach ($lista_animais as $animal) {
                     ?>
                         <div class="card mb-3"">

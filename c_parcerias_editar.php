@@ -1,26 +1,44 @@
 <?php
 
-  if (!isset($_SESSION)) session_start();
+if (!isset($_SESSION)) session_start();
 
-  include_once"conexao.php";
+include_once "conexao.php";
 
-  if (!isset($_SESSION['gerenciadorId'])) {
-       session_destroy();      
-       header("Location: admin.php"); exit;
-  }
-  $id = $_GET['id'];
+if (!isset($_SESSION['gerenciadorId'])) {
+    session_destroy();
+    header("Location: admin.php");
+    exit;
+}
 
-  $query = "SELECT * FROM `contacts_msg` WHERE `id` = $id";
-  $select = $mysqli -> query($query);
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
-  if (mysqli_num_rows($select) == 0) {
-      $_SESSION['msgContent'] = '<div class="alert alert-danger" role="alert">
-      Parceria não encontrada!</div>';
-      header("Location: ../c_parcerias.php"); exit;    
-  } 
+if ($id === false || $id <= 0) {
+    $_SESSION['msgContent'] = '<div class="alert alert-danger" role="alert">
+    Parceria inválida ou não informada!</div>';
+    header("Location: c_parcerias.php");
+    exit;
+}
 
-  $parceria = $select->fetch_array();
+try {
+  $query = "SELECT * FROM `contacts_msg` WHERE `id` = :id";
+  $stmt = $pdo->prepare($query);
+  $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+  $stmt->execute();
+} catch (PDOException $e) {
+  echo "Erro: " . $e->getMessage();
+  die();
+}
+
+$parceria = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$parceria) {
+    $_SESSION['msgContent'] = '<div class="alert alert-danger" role="alert">
+    Parceria não encontrada!</div>';
+    header("Location: c_parcerias.php");
+    exit;
+}
 ?>
+
 
 <html lang="pt">
   <head>
