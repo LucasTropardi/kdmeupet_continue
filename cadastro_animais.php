@@ -133,7 +133,7 @@
 
                 <!-- TIPO DO ANIMAL -->
                 <div class="mb-3">
-                    <label for="tipo" class="form-label">Tipo do Animal: </label>
+                    <label for="tipo" class="form-label">Espécie do Animal: </label>
                     <select class="form-select" id="tipo" name="tipo">
                         <option disabled selected value="">Selecione uma Opção</option>
                         <?php 

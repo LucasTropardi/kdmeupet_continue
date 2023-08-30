@@ -21,6 +21,13 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
+        <style>.custom-bg-blue {
+                background-color: #4682B4;
+                color: #FFD700;
+                padding: 20px 0; /* Ajuste o espaçamento conforme necessário */
+                }
+        </style>
+
         <?php include "analytics.php"; ?>
         
     </head>
@@ -62,7 +69,7 @@
                 <!-- TIPO DO ANIMAL -->      
                 <div class="row">
                     <div class="col">
-                    <label for="tipo" class="form-label">Tipo do Animal: </label>
+                    <label for="tipo" class="form-label">Espécie: </label>
                     <select class="form-select" id="tipo" name="tipo" required  >
                         <option disabled selected value="">Selecione uma Opção</option>
                         <?php 
@@ -213,6 +220,8 @@
         </section>
         <!-- FIM Achados -->
 
+        <!--<?php include "final_da_pagina.php" ?>-->
+
         <!-- Rodapé -->
         <footer class="footer2 py-4">
             <div class="container">
@@ -224,7 +233,7 @@
                 </div>
             </div>
         </footer>
-        <!-- FIM Rodapé -->
+         <!-- FIM Rodapé -->
 
         <!-- ACHADOS Modals-->
         <?php

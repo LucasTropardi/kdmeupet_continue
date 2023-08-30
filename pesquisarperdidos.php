@@ -67,7 +67,7 @@
                     <!-- TIPO DO ANIMAL -->      
                     <div class="row">
                         <div class="col">
-                        <label for="tipo" class="form-label">Tipo do Animal: </label>
+                        <label for="tipo" class="form-label">Espécie: </label>
                         <select class="form-select" id="tipo" name="tipo" required  >
                             <option disabled selected value="">Selecione uma Opção</option>
                             <?php 

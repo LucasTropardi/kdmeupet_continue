@@ -58,7 +58,7 @@
             <div class="p-3 mb-2 bg-light text-dark container">  
 
                 <div class="form-group">
-                <label for="exampleFormControlSelect1">Tipos:</label>
+                <label for="exampleFormControlSelect1">Espécies:</label>
                 <select class="form-control" id="tipo" name="tipo">               
                          <option selected>Selecione</option>
                           <?php 
@@ -95,7 +95,7 @@
                 <tr>
                   <th>ID</th>
                   <th>Nome</th>
-                  <th>Tipo</th>
+                  <th>Espécie</th>
                 </tr>
               </thead>
               <tbody>

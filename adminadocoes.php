@@ -120,7 +120,7 @@
                 <!-- TIPO DO ANIMAL -->
                 <div class="row">
                 <div class="col">
-                    <label for="tipo" class="form-label">Tipo do Animal: </label>
+                    <label for="tipo" class="form-label">Espécie: </label>
                     <select class="form-select" id="tipo" name="tipo">
                         <option disabled selected value="">Selecione uma Opção</option>
                         <?php 
@@ -235,7 +235,7 @@
                     <th>Descrição</th> 
                     <th>Contato</th> 
                     <th>Idade</th> 
-                    <th>Tipo</th> 
+                    <th>Espécie</th> 
                     <th>Raça</th> 
                     <th>Tamanho</th> 
                     <th>Cor</th> 

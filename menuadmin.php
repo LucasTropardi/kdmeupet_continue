@@ -2,7 +2,7 @@
               <li class="nav-item">
                 <a class="nav-link" href="tipos.php">
                   <span data-feather="file"></span>
-                  Tipos
+                  Espécies
                 </a>
               </li>
               <li class="nav-item">
