@@ -214,7 +214,9 @@ use Google\Service\Datastream\FetchErrorsRequest;
         </section>
         <!-- FIM Perdidos -->
 
-        <!-- Rodapé -->
+
+        <?php include "final_da_pagina.php" ?>
+        <!-- Rodapé 
         <footer class="footer2 py-4">
             <div class="container">
                 <div class="row align-items-center">

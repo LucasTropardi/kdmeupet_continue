@@ -23,6 +23,8 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
         <?php include "analytics.php"; ?>
+
+        
         
     </head>
     <body id="page-top">
@@ -132,7 +134,9 @@
         </section>
         <!-- FIM Achados -->
 
-        <!-- Rodapé -->
+        <?php include "final_da_pagina.php" ?>
+
+        <!-- Rodapé 
         <footer class="footer2 py-4">
             <div class="container">
                 <div class="row align-items-center">

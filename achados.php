@@ -21,12 +21,6 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-        <style>.custom-bg-blue {
-                background-color: #4682B4;
-                color: #FFD700;
-                padding: 20px 0; /* Ajuste o espaçamento conforme necessário */
-                }
-        </style>
 
         <?php include "analytics.php"; ?>
         
@@ -220,9 +214,9 @@
         </section>
         <!-- FIM Achados -->
 
-        <!--<?php include "final_da_pagina.php" ?>-->
+        <?php include "final_da_pagina.php" ?>
 
-        <!-- Rodapé -->
+        <!-- Rodapé 
         <footer class="footer2 py-4">
             <div class="container">
                 <div class="row align-items-center">
